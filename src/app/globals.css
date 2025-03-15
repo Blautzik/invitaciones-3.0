@@ -1,0 +1,227 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'BigCaslon';
+  src: url('/fonts/BigCaslon-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BigCaslon';
+  src: url('/fonts/BigCaslon-Italic.woff2') format('woff2');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SuisseIntl';
+  src: url('/fonts/SuisseIntl-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SuisseIntl';
+  src: url('/fonts/SuisseIntl-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 0 0% 10%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 0% 100%;
+    --radius: 0rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth overflow-x-hidden;
+    font-size: 16px;
+    touch-action: manipulation;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-black text-white font-sans overflow-x-hidden;
+    font-family: 'SuisseIntl', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    scroll-behavior: smooth;
+    overscroll-behavior-y: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'BigCaslon', serif;
+    font-weight: normal;
+  }
+
+  /* Add styles to improve letter spacing */
+  h1, h2 {
+    letter-spacing: -0.01em;
+  }
+
+  /* Smoother animation for overflow fades */
+  main {
+    isolation: isolate;
+  }
+
+  /* Better scrolling */
+  @media (pointer: fine) {
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  /* Fix font rendering on mobile */
+  @media (max-width: 768px) {
+    body {
+      text-rendering: optimizeSpeed;
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 8vw, 4rem);
+    }
+
+    h2 {
+      font-size: clamp(1.75rem, 6vw, 2.5rem);
+    }
+  }
+}
+
+/* Vertical text styling */
+.vertical-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  white-space: nowrap;
+  transform: rotate(180deg);
+  will-change: transform;
+}
+
+/* Image reveal effects */
+.image-reveal {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 1.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+  will-change: clip-path;
+}
+
+.image-reveal.visible {
+  clip-path: inset(0 0 0 0);
+}
+
+/* Staggered letter animations */
+.staggered-letter {
+  display: inline-block;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1),
+              opacity 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+  will-change: transform, opacity;
+}
+
+.staggered-letter.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Parallax image container */
+.parallax-container {
+  overflow: hidden;
+  position: relative;
+  will-change: transform;
+}
+
+/* Scroll progress indicator */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: white;
+  transform-origin: 0%;
+  z-index: 100;
+  will-change: transform;
+}
+
+/* Better fixed position elements */
+.fixed-element {
+  position: fixed;
+  will-change: transform;
+}
+
+/* Smoother page transitions */
+.page-transition {
+  transition: opacity 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Optimize mobile animations */
+@media (max-width: 768px) {
+  .vertical-text {
+    position: relative;
+    opacity: 0.8;
+    font-size: 0.875rem;
+  }
+
+  .overflow-hidden {
+    overflow: hidden;
+  }
+
+  /* Smaller scroll indicator on mobile */
+  .scroll-progress {
+    height: 1px;
+  }
+}
