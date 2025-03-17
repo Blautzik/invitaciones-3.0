@@ -2,23 +2,32 @@ import { ProjectData } from './types';
 
 // Mock data simulating a database response
 const mockProjectData: ProjectData = {
-  title: "Chantal Janzen for FifthHouse",
+  title: "Agus Quince Años",
   heroImage: {
     src: "/images/campaign-1.jpg",
-    alt: "Chantal Janzen for FifthHouse"
+    alt: "Agus Quince años"
   },
-  description: "A stunning campaign featuring Chantal Janzen for FifthHouse. Elegant, stylish, and captivating imagery that showcases both the model's and the brand's essence.",
+  name:"Agus",
+  date:"01/12/2025", 
+  time:"21:30",
+  fraseRegalos: "Si queres regalarme algo más que tu hermosa presencia...",
+  alias:"ALIAS.ALIAS.EJEMPLO",
+  titular:"Nombre Apellido",
+  cbu:"0000000000000000000",
+  dni:"50213212",
+  formId:"ajajakaskkadskdamsdasdkaskd",
+  description: "Te espero para compartir la alegría de esta día inolvidable y único",
   verticalTitles: {
-    left: "QUINCE",
-    right: "AÑOS"
+    left: "AÑOS",
+    right: "QUINCE"
   },
   credits: [
     { label: "Fecha", value: "01/12/2025" },
+    { label: "Hora", value: "21:30" },
     { label: "Salón", value: "Palacio Sans Soucí" },
-    { label: "Styling", value: "Sanne Berriotte" },
-    { label: "Makeup", value: "Gwen van Waveren" },
-    { label: "Production", value: "Lisa Verheul" },
-    { label: "Category", value: "campaigns" }
+    { label: "Dirección", value: "Paz 705, Victoria, Bs As" },
+    { label: "Ubicación", value: "Ver en maps" },
+    { label: "Dress code", value: "Elegante" },
   ],
   galleryImages: [
     { src: "/images/campaign-1.jpg", alt: "Chantal for FifthHouse 1" },
@@ -29,12 +38,12 @@ const mockProjectData: ProjectData = {
     { src: "/images/campaign-6.jpg", alt: "Chantal for FifthHouse 6" }
   ],
   nextProject: {
-    title: "Fifth House SS24",
-    subtitle: "Next Case"
+    title: "Palacio Sans Souci",
+    subtitle: ""
   },
   photographer: {
-    name: "Otto van den Toorn",
-    description: "is a beauty & fashion photographer from The Netherlands."
+    name: "",
+    description: "Gracias por acompañarme en este momento tan importante"
   }
 };
 

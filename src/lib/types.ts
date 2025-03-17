@@ -13,6 +13,15 @@ export interface ProjectCredit {
 export interface ProjectData {
   title: string;
   heroImage: ProjectImage;
+  name: string;
+  date: string;
+  time:string;
+  fraseRegalos: string;
+  alias:string;
+  cbu:string;
+  titular:string;
+  dni:string;
+  formId:string
   description: string;
   verticalTitles: {
     left: string;

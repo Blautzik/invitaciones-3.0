@@ -12,22 +12,22 @@ const NavBar = () => {
     >
       <Link href="/">
         <div className="text-3xl md:text-4xl font-light text-white cursor-pointer">
-          Ottografie
+          
         </div>
       </Link>
 
       <nav className="hidden md:flex gap-8">
-        <Link href="#" className="text-white hover:opacity-70 transition-opacity">
-          Campaigns
+        <Link href="#info" className="text-white hover:opacity-70 transition-opacity">
+          Info
         </Link>
-        <Link href="#" className="text-white hover:opacity-70 transition-opacity">
-          Editorial
+        <Link href="#galeria" className="text-white hover:opacity-70 transition-opacity">
+          Galería
         </Link>
-        <Link href="#" className="text-white hover:opacity-70 transition-opacity">
-          Celebrities
+        <Link href="#regalos" className="text-white hover:opacity-70 transition-opacity">
+          Regalos
         </Link>
-        <Link href="#" className="text-white hover:opacity-70 transition-opacity">
-          Beauty
+        <Link href="#confirmar" className="text-white hover:opacity-70 transition-opacity">
+          Confirmar Asistencia
         </Link>
       </nav>
 

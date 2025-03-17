@@ -4,8 +4,8 @@ import { ClientBody } from "./ClientBody";
 import { AppProvider } from "@/lib/context";
 
 export const metadata: Metadata = {
-  title: "Ottografie | Chantal Janzen for FifthHouse (Clone)",
-  description: "A clone of Ottografie's photography portfolio showcasing the Chantal Janzen for FifthHouse campaign",
+  title: "Agus, Mis xv",
+  description: "Te invito a festejar juntos este día tan especial",
 };
 
 export default function RootLayout({

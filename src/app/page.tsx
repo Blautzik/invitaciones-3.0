@@ -1,14 +1,35 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform, useAnimation, useMotionValue, useSpring } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useAnimation,
+  useMotionValue,
+  useSpring,
+  AnimatePresence,
+} from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import Image from "next/image";
 import { useAppContext } from "@/lib/context";
 import LoadingScreen from "@/components/LoadingScreen";
+import Countdown from "@/components/Countdown";
+import { FadeInSection } from "@/components/FadeInSection";
+import { Formulario } from "@/components/Formulario";
+import Regalos from "@/components/Regalos";
 
 
-const VerticalLetter = ({ letter, index, delay = 0 }: { letter: string; index: number; delay?: number }) => {
+// Letter-by-letter animation for horizontal text (replacing VerticalLetter)
+const HorizontalLetter = ({
+  letter,
+  index,
+  delay = 0,
+}: {
+  letter: string;
+  index: number;
+  delay?: number;
+}) => {
   const [ref, inView] = useInView({
     triggerOnce: false,
     threshold: 0.1,
@@ -23,7 +44,7 @@ const VerticalLetter = ({ letter, index, delay = 0 }: { letter: string; index: n
         transition={{
           duration: 1,
           delay: index * 0.04 + delay,
-          ease: [0.25, 0.1, 0.25, 1]
+          ease: [0.25, 0.1, 0.25, 1],
         }}
         className="inline-block py-[2px] text-center"
       >
@@ -33,24 +54,36 @@ const VerticalLetter = ({ letter, index, delay = 0 }: { letter: string; index: n
   );
 };
 
-// Improved Vertical Text Component
-const VerticalText = ({ text, className = "", delay = 0, position = "right" }: {
+// Modified VerticalText to be horizontal
+const HorizontalText = ({
+  text,
+  className = "",
+  delay = 0,
+}: {
   text: string;
   className?: string;
   delay?: number;
-  position?: "left" | "right";
 }) => {
   return (
-    <div className={`hidden md:flex flex-col vertical-text ${className} ${position === "left" ? "items-start" : "items-end"}`}>
+    <div className={`hidden md:inline-block ${className}`}>
       {text.split("").map((letter, index) => (
-        <VerticalLetter key={index} letter={letter} index={index} delay={delay} />
+        <HorizontalLetter
+          key={index}
+          letter={letter}
+          index={index}
+          delay={delay}
+        />
       ))}
     </div>
   );
 };
 
-// Mobile Vertical Text (horizontal layout for mobile)
-const MobileVerticalText = ({ text, className = "", delay = 0 }: {
+// Modified MobileVerticalText to remain horizontal
+const MobileHorizontalText = ({
+  text,
+  className = "",
+  delay = 0,
+}: {
   text: string;
   className?: string;
   delay?: number;
@@ -69,7 +102,7 @@ const MobileVerticalText = ({ text, className = "", delay = 0 }: {
           transition={{
             duration: 0.8,
             delay,
-            ease: [0.25, 0.1, 0.25, 1]
+            ease: [0.25, 0.1, 0.25, 1],
           }}
         >
           <span className="tracking-widest text-sm">{text}</span>
@@ -79,17 +112,23 @@ const MobileVerticalText = ({ text, className = "", delay = 0 }: {
   );
 };
 
-// Refined Navigation Component
+// Refined Navigation Component (unchanged)
 const NavBar = () => {
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.1], [1, 0.95]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Toggle menu handler
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
     <motion.header
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
-      className="fixed top-0 left-0 w-full z-50 p-6 md:p-10 flex justify-between items-center mix-blend-difference"
+      className="fixed top-0 left-0 w-full z-50 p-6 md:p-10 flex justify-between items-center "
       style={{ opacity }}
     >
       <motion.a
@@ -98,46 +137,102 @@ const NavBar = () => {
         whileHover={{ scale: 1.02 }}
         transition={{ duration: 0.3 }}
       >
-        Ottografie
+        {/* Add your logo or site name here if needed */}
       </motion.a>
 
+      {/* Desktop Navigation */}
       <nav className="hidden md:flex gap-10">
-        {["Campaigns", "Editorial", "Celebrities", "Beauty"].map((item, index) => (
-          <motion.a
-            key={item}
-            href="#"
-            className="text-white hover:opacity-70 transition-opacity duration-300"
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.2 + index * 0.1,
-              ease: [0.25, 0.1, 0.25, 1]
-            }}
-            whileHover={{ y: -2 }}
-          >
-            {item}
-          </motion.a>
-        ))}
+        {["Info", "Galeria", "Regalos", "Confirmar Asistencia"].map(
+          (item, index) => (
+            <motion.a
+              key={item}
+              href={`#${item.toLowerCase().replace(" ", "-")}`} // Convert to proper anchor links
+              className="text-white hover:opacity-70 transition-opacity duration-300"
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{
+                duration: 0.6,
+                delay: 0.2 + index * 0.1,
+                ease: [0.25, 0.1, 0.25, 1],
+              }}
+              whileHover={{ y: -2 }}
+            >
+              {item}
+            </motion.a>
+          )
+        )}
       </nav>
 
+      {/* Mobile Menu Button */}
       <motion.button
         className="md:hidden text-white text-sm"
         whileTap={{ scale: 0.95 }}
+        onClick={toggleMenu}
       >
-        Menu
+        {isMenuOpen ? "Close" : "Menu"}
       </motion.button>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: "-100%" }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: "-100%" }}
+            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+            className="fixed inset-x-0 top-20 bg-black md:hidden z-40 p-6 border-t border-b border-white/20"
+          >
+            <nav className="flex flex-col gap-6 bg-black">
+              {["Info", "Galeria", "Regalos", "Confirmar Asistencia"].map(
+                (item, index) => (
+                  <motion.a
+                    key={item}
+                    href={`#${item.toLowerCase().replace(" ", "-")}`}
+                    className="text-white bg-black text-lg hover:opacity-70 transition-opacity duration-300"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      duration: 0.4,
+                      delay: index * 0.1,
+                      ease: [0.25, 0.1, 0.25, 1],
+                    }}
+                    onClick={() => setIsMenuOpen(false)} // Close menu on link click
+                  >
+                    {item}
+                  </motion.a>
+                )
+              )}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 };
 
-// Enhanced Hero Section
+// Enhanced Hero Section with horizontal text
 const Hero = ({
   heroImage,
-  verticalTitles
+  verticalTitles,
+  name,
+  date,
+  imageStylesPC = {
+    position: { x: "50%", y: "50%" },
+    brightness: 0.85,
+    contrast: 1,
+    saturation: 1,
+  },
 }: {
   heroImage: { src: string; alt: string };
   verticalTitles: { left: string; right: string };
+  name: string;
+  date: string;
+  imageStylesPC?: {
+    position?: { x: string; y: string };
+    brightness?: number;
+    contrast?: number;
+    saturation?: number;
+  };
 }) => {
   const { scrollY } = useScroll();
   const springConfig = { stiffness: 100, damping: 30, restDelta: 0.001 };
@@ -146,17 +241,17 @@ const Hero = ({
   const scale = useTransform(scrollY, [0, 300], [1, 1.15]);
   const y = useSpring(useTransform(scrollY, [0, 300], [0, 150]), springConfig);
 
-  const titleY = useSpring(
-    useTransform(scrollY, [0, 150], [0, 75]),
-    { stiffness: 50, damping: 15 }
-  );
+  const titleY = useSpring(useTransform(scrollY, [0, 150], [0, 75]), {
+    stiffness: 50,
+    damping: 15,
+  });
+
+  // Crear un filtro CSS basado en los valores de imageStylesPC
+  const imageFilter = `brightness(${imageStylesPC.brightness}) contrast(${imageStylesPC.contrast}) saturate(${imageStylesPC.saturation})`;
 
   return (
     <section className="relative h-screen w-full overflow-hidden">
-      <motion.div
-        className="absolute inset-0 z-0"
-        style={{ opacity, scale }}
-      >
+      <motion.div className="absolute inset-0 z-0" style={{ opacity, scale }}>
         <Image
           src={heroImage.src}
           alt={heroImage.alt}
@@ -165,6 +260,10 @@ const Hero = ({
           priority
           sizes="100vw"
           quality={90}
+          style={{
+            objectPosition: `${imageStylesPC.position?.x} ${imageStylesPC.position?.y}`,
+            filter: imageFilter,
+          }}
         />
       </motion.div>
       <div className="absolute inset-0 bg-black/15 mix-blend-multiply" />
@@ -173,27 +272,54 @@ const Hero = ({
         className="absolute inset-0 z-10 flex flex-col justify-center items-center text-white p-8"
         style={{ y: titleY }}
       >
-        <div className="overflow-hidden">
+        <div className="overflow">
           <motion.h1
             initial={{ y: 100 }}
             animate={{ y: 0 }}
-            transition={{ duration: 1.2, delay: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{
+              duration: 1.2,
+              delay: 0.5,
+              ease: [0.25, 0.1, 0.25, 1],
+            }}
             className="font-serif text-6xl md:text-8xl lg:text-9xl tracking-wide text-center"
           >
-            {verticalTitles.right.charAt(0) + verticalTitles.right.slice(1).toLowerCase()}
+            {name.charAt(0) + name.slice(1).toLowerCase()}
           </motion.h1>
         </div>
 
+        <motion.div
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          transition={{ duration: 1.2, delay: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+        >
+          <div className="flex w-full justify-center md:hidden">
+            <h3 className="font-serif text-xl md:text-3xl lg:text-9xl tracking-wide text-center">
+              {date}
+            </h3>
+          </div>
+        </motion.div>
+
         <div className="absolute right-8 md:right-16 top-1/2 transform -translate-y-1/2">
-          <VerticalText text={verticalTitles.right} className="text-xl tracking-widest" />
+          <HorizontalText
+            text={verticalTitles.left}
+            className="text-xl tracking-widest"
+          />
         </div>
 
         <div className="absolute left-8 md:left-16 top-1/2 transform -translate-y-1/2">
-          <VerticalText text={verticalTitles.left} className="text-xl tracking-widest" delay={0.2} position="left" />
+          <HorizontalText
+            text={verticalTitles.right}
+            className="text-xl tracking-widest"
+            delay={0.2}
+          />
         </div>
 
-        <div className="mt-8 md:hidden text-center">
-          <MobileVerticalText text={`${verticalTitles.right} ${verticalTitles.left}`} className="text-sm tracking-widest" delay={0.4} />
+        <div className="mt-2 md:hidden text-center">
+          <MobileHorizontalText
+            text={`${verticalTitles.right} ${verticalTitles.left}`}
+            className="text-sm tracking-widest"
+            delay={0.4}
+          />
         </div>
       </motion.div>
 
@@ -206,7 +332,7 @@ const Hero = ({
           transition={{
             repeat: Infinity,
             duration: 2,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
           className="w-6 h-12 border-2 border-white rounded-full flex justify-center pt-2"
         >
@@ -217,7 +343,7 @@ const Hero = ({
   );
 };
 
-// Refined Letter-by-letter Title Animation
+// Refined Letter-by-letter Title Animation (unchanged)
 const HorizontalTitle = ({ title }: { title: string }) => {
   const [ref, inView] = useInView({
     triggerOnce: false,
@@ -225,29 +351,46 @@ const HorizontalTitle = ({ title }: { title: string }) => {
     rootMargin: "-5% 0%",
   });
 
+  // Dividir el título en palabras en lugar de caracteres
+  const words = title.split(" ");
+
   return (
-    <h2 ref={ref} className="text-3xl md:text-5xl lg:text-7xl font-serif mb-20 overflow-hidden">
-      {title.split("").map((letter, index) => (
-        <motion.span
-          key={index}
-          initial={{ y: "100%" }}
-          animate={{ y: inView ? "0%" : "100%" }}
-          transition={{
-            duration: 0.8,
-            delay: index * 0.03,
-            ease: [0.25, 0.1, 0.25, 1]
-          }}
-          className="inline-block"
-        >
-          {letter === " " ? "\u00A0" : letter}
-        </motion.span>
+    <h2
+      ref={ref}
+      className="text-3xl md:text-5xl lg:text-7xl font-serif mb-20 overflow-hidden"
+    >
+      {words.map((word, wordIndex) => (
+        <span key={wordIndex} className="inline-block whitespace-nowrap mr-2">
+          {word.split("").map((letter, letterIndex) => (
+            <motion.span
+              key={`${wordIndex}-${letterIndex}`}
+              initial={{ y: "100%" }}
+              animate={{ y: inView ? "0%" : "100%" }}
+              transition={{
+                duration: 0.8,
+                delay: (wordIndex * 0.15) + (letterIndex * 0.03),
+                ease: [0.25, 0.1, 0.25, 1],
+              }}
+              className="inline-block"
+            >
+              {letter}
+            </motion.span>
+          ))}
+        </span>
       ))}
     </h2>
   );
 };
-
-// Advanced parallax image component with enhanced mobile support
-const ParallaxImage = ({ src, alt, index }: { src: string; alt: string; index: number }) => {
+// Advanced parallax image component with enhanced effects
+const ParallaxImage = ({
+  src,
+  alt,
+  index,
+}: {
+  src: string;
+  alt: string;
+  index: number;
+}) => {
   const containerRef = useRef(null);
   const [elementTop, setElementTop] = useState(0);
   const [clientHeight, setClientHeight] = useState(0);
@@ -256,18 +399,25 @@ const ParallaxImage = ({ src, alt, index }: { src: string; alt: string; index: n
   const { scrollY } = useScroll();
 
   // Initial scale value when image first appears
-  const initialScale = 1.1;
+  const initialScale = 1.15; // Slightly more noticeable on desktop
 
   // Calculate parallax effect based on scroll position and element position
   const scale = useTransform(
     scrollY,
     [elementTop - clientHeight, elementTop + clientHeight],
-    [mounted ? initialScale : 1, 0.95]
+    [mounted ? initialScale : 1, 0.9] // Enhanced scale range
   );
 
-  // Smaller parallax effect on mobile
-  const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
-  const moveAmount = isMobile ? (index % 2 === 0 ? 40 : -40) : (index % 2 === 0 ? 80 : -80);
+  // More pronounced parallax effect: increased on desktop, much more on mobile
+  const isMobile =
+    typeof window !== "undefined" ? window.innerWidth < 768 : false;
+  const moveAmount = isMobile
+    ? index % 2 === 0
+      ? 100
+      : -100
+    : index % 2 === 0
+    ? 100
+    : -100; // Much more noticeable on mobile
 
   const y = useTransform(
     scrollY,
@@ -281,7 +431,7 @@ const ParallaxImage = ({ src, alt, index }: { src: string; alt: string; index: n
       elementTop - clientHeight * 1.2,
       elementTop - clientHeight * 0.8,
       elementTop + clientHeight * 0.8,
-      elementTop + clientHeight * 1.2
+      elementTop + clientHeight * 1.2,
     ],
     [0, 1, 1, 0]
   );
@@ -299,7 +449,6 @@ const ParallaxImage = ({ src, alt, index }: { src: string; alt: string; index: n
     updatePosition();
     window.addEventListener("resize", updatePosition);
 
-    // Trigger the initial appear animation after a delay
     const timer = setTimeout(() => {
       setMounted(true);
     }, 100 + index * 100);
@@ -320,13 +469,10 @@ const ParallaxImage = ({ src, alt, index }: { src: string; alt: string; index: n
       transition={{
         duration: 1,
         delay: 0.1 + index * 0.1,
-        ease: [0.25, 0.1, 0.25, 1]
+        ease: [0.25, 0.1, 0.25, 1],
       }}
     >
-      <motion.div
-        className="w-full h-full"
-        style={{ y, scale }}
-      >
+      <motion.div className="w-full h-full" style={{ y, scale }}>
         <Image
           src={src}
           alt={alt}
@@ -340,78 +486,37 @@ const ParallaxImage = ({ src, alt, index }: { src: string; alt: string; index: n
   );
 };
 
-// Improved fade-in component with enhanced mobile support
-const FadeInSection = ({ children, delay = 0, direction = "up" }: {
-  children: React.ReactNode;
-  delay?: number;
-  direction?: "up" | "down" | "left" | "right";
-}) => {
-  const [ref, inView] = useInView({
-    triggerOnce: false,
-    threshold: 0.1,
-  });
+// FadeInSection (unchanged)
 
-  // Smaller movement on mobile
-  const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
-  const moveAmount = isMobile ? 15 : 30;
-
-  const directionMap = {
-    up: { y: moveAmount, x: 0 },
-    down: { y: -moveAmount, x: 0 },
-    left: { y: 0, x: moveAmount },
-    right: { y: 0, x: -moveAmount }
-  };
-
-  const initialPosition = directionMap[direction];
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: initialPosition.y, x: initialPosition.x }}
-      animate={inView ? { opacity: 1, y: 0, x: 0 } : { opacity: 0, y: initialPosition.y, x: initialPosition.x }}
-      transition={{
-        duration: 0.8,
-        delay,
-        ease: [0.25, 0.1, 0.25, 1]
-      }}
-    >
-      {children}
-    </motion.div>
-  );
-};
-
-// Smooth scroll progress indicator
+// ScrollProgressIndicator (unchanged)
 const ScrollProgressIndicator = () => {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
-    restDelta: 0.001
+    restDelta: 0.001,
   });
 
-  return (
-    <motion.div
-      className="scroll-progress"
-      style={{ scaleX }}
-    />
-  );
+  return <motion.div className="scroll-progress" style={{ scaleX }} />;
 };
 
-// Enhanced project info section
+// ProjectSection (unchanged)
 const ProjectSection = ({
   title,
   description,
-  credits
+  credits,
+  date,
 }: {
   title: string;
   description: string;
   credits: Array<{ label: string; value: string }>;
+  date:string
 }) => {
   return (
     <section className="bg-black text-white py-32 md:py-40 px-6 md:px-16">
       <div className="max-w-7xl mx-auto">
         <div className="mb-20 md:mb-32 overflow-hidden">
-          <HorizontalTitle title={title} />
+          <HorizontalTitle title={description} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-24">
@@ -426,7 +531,7 @@ const ProjectSection = ({
                   transition={{
                     duration: 0.5,
                     delay: 0.3 + index * 0.1,
-                    ease: [0.25, 0.1, 0.25, 1]
+                    ease: [0.25, 0.1, 0.25, 1],
                   }}
                   viewport={{ once: false, margin: "-5% 0px" }}
                 >
@@ -438,9 +543,11 @@ const ProjectSection = ({
           </FadeInSection>
 
           <FadeInSection delay={0.4} direction="up">
-            <p className="text-lg md:text-2xl leading-relaxed text-gray-300">
-              {description}
-            </p>
+            <h3 className="text-center font-sans mt-10">Faltan:</h3>
+            <div className="flex items-center justify-center">
+
+              <Countdown date={date}/>
+            </div>
           </FadeInSection>
         </div>
       </div>
@@ -448,43 +555,50 @@ const ProjectSection = ({
   );
 };
 
-// Enhanced gallery section
+// GallerySection with horizontal text
 const GallerySection = ({
-  images
+  images,
 }: {
   images: Array<{ src: string; alt: string }>;
 }) => {
   return (
-    <section className="bg-black text-white py-20 md:py-40 px-6 md:px-16 relative">
+    <section className="bg-black text-white py-10 md:py-40 px-6 md:px-16 relative">
       <div className="absolute right-6 md:right-16 top-24 md:top-1/4">
-        <VerticalText text="GALLERY" className="text-xl tracking-widest" />
+        <HorizontalText text="GALLERY" className="text-xl tracking-widest" />
       </div>
 
       <div className="md:hidden mt-10 mb-16 text-center">
-        <MobileVerticalText text="GALLERY" className="text-sm tracking-widest" />
+        <MobileHorizontalText
+          text="GALLERY"
+          className="text-sm tracking-widest"
+        />
       </div>
 
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
           <div>
-            {images.filter((_, i) => i % 2 === 0).map((image, index) => (
-              <ParallaxImage
-                key={`even-${index}`}
-                src={image.src}
-                alt={image.alt}
-                index={index * 2}
-              />
-            ))}
+            {images
+              .filter((_, i) => i % 2 === 0)
+              .map((image, index) => (
+                <ParallaxImage
+                  key={`even-${index}`}
+                  src={image.src}
+                  alt={image.alt}
+                  index={index * 2}
+                />
+              ))}
           </div>
           <div className="md:mt-32">
-            {images.filter((_, i) => i % 2 === 1).map((image, index) => (
-              <ParallaxImage
-                key={`odd-${index}`}
-                src={image.src}
-                alt={image.alt}
-                index={index * 2 + 1}
-              />
-            ))}
+            {images
+              .filter((_, i) => i % 2 === 1)
+              .map((image, index) => (
+                <ParallaxImage
+                  key={`odd-${index}`}
+                  src={image.src}
+                  alt={image.alt}
+                  index={index * 2 + 1}
+                />
+              ))}
           </div>
         </div>
       </div>
@@ -492,10 +606,10 @@ const GallerySection = ({
   );
 };
 
-// Enhanced footer section
+// FooterSection with horizontal text
 const FooterSection = ({
   nextProject,
-  photographer
+  photographer,
 }: {
   nextProject: { title: string; subtitle: string };
   photographer: { name: string; description: string };
@@ -507,7 +621,9 @@ const FooterSection = ({
           <div className="mb-12 md:mb-0">
             <div className="overflow-hidden mb-4">
               <FadeInSection>
-                <h3 className="text-xl md:text-3xl font-serif">{nextProject.subtitle}</h3>
+                <h3 className="text-xl md:text-3xl font-serif">
+                  {nextProject.subtitle}
+                </h3>
               </FadeInSection>
             </div>
             <div className="overflow-hidden">
@@ -520,53 +636,95 @@ const FooterSection = ({
           </div>
           <div className="text-gray-400">
             <FadeInSection delay={0.4} direction="left">
-              <p>{photographer.name} {photographer.description}</p>
+              <p>
+                {photographer.name} {photographer.description}
+              </p>
             </FadeInSection>
           </div>
         </div>
 
         <div className="absolute right-6 md:right-16 bottom-20 md:bottom-32">
-          <VerticalText text="NEXT" className="text-xl tracking-widest" />
+          <HorizontalText text="NEXT" className="text-xl tracking-widest" />
         </div>
 
         <div className="md:hidden mt-16 text-center">
-          <MobileVerticalText text="NEXT CASE" className="text-sm tracking-widest" />
+          <MobileHorizontalText
+            text="InterActive"
+            className="text-sm tracking-widest"
+          />
         </div>
       </div>
     </footer>
   );
 };
 
-// Main page component
+// Main page component (unchanged)
 export default function Home() {
   const { state } = useAppContext();
   const { projectData, isEntered } = state;
 
   if (!projectData) {
-    return <LoadingScreen />;
+    return <LoadingScreen title="InterActive"/>;
   }
 
   return (
     <main className="bg-black text-white">
-      <LoadingScreen />
-      <ScrollProgressIndicator />
-      <NavBar />
-      <Hero
-        heroImage={projectData.heroImage}
-        verticalTitles={projectData.verticalTitles}
-      />
-      <ProjectSection
-        title={projectData.title}
-        description={projectData.description}
-        credits={projectData.credits}
-      />
-      <GallerySection
-        images={projectData.galleryImages}
-      />
-      <FooterSection
-        nextProject={projectData.nextProject}
-        photographer={projectData.photographer}
-      />
-    </main>
+    <LoadingScreen  title={projectData.name}/>
+    <AnimatePresence>
+      {isEntered && projectData && (
+        <motion.div
+          initial={{ opacity: 1, y: 100}}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 1.5,
+            ease: [0.16, 1, 0.3, 1],
+            delay: 0
+          }}
+        >
+          <ScrollProgressIndicator />
+          <NavBar />
+          <Hero
+            heroImage={projectData.heroImage}
+            verticalTitles={projectData.verticalTitles}
+            name={projectData.name}
+            date={projectData.date}
+            imageStylesPC={{position: {x:"50%", y: "30%"}}}
+          />
+          <section id="info">
+
+          <ProjectSection
+          
+          title={projectData.title}
+          description={projectData.description}
+          credits={projectData.credits}
+          date={projectData.date}
+          />
+          </section>
+          <section id="galeria">
+
+          <GallerySection images={projectData.galleryImages} />
+          </section>
+          <section id="regalos">
+
+          <Regalos 
+            fraseRegalos={projectData.fraseRegalos} 
+            alias={projectData.alias} 
+            titular={projectData.titular} 
+            cbu={projectData.cbu}   
+            dni={projectData.dni}
+            />
+            </section>
+            <section id="confirmar-asistencia">
+
+          <Formulario form_id={projectData.formId}/>
+            </section>
+          <FooterSection
+            nextProject={projectData.nextProject}
+            photographer={projectData.photographer}
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </main>
   );
 }
