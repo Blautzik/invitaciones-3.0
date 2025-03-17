@@ -391,7 +391,7 @@ const ParallaxImage = ({
   alt: string;
   index: number;
 }) => {
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [elementTop, setElementTop] = useState(0);
   const [clientHeight, setClientHeight] = useState(0);
   const [mounted, setMounted] = useState(false);
