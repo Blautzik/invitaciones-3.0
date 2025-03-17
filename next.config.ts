@@ -1,6 +1,4 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+const nextConfig = {
   reactStrictMode: true,
   images: {
     remotePatterns: [
@@ -9,6 +7,7 @@ const nextConfig: NextConfig = {
         hostname: "ext.same-assets.com",
       },
     ],
+    unoptimized: true, // Desactiva la optimización de imágenes en producción
   },
   experimental: {
     optimizeCss: true,
