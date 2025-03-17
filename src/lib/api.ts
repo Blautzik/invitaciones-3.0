@@ -67,6 +67,8 @@ export const fetchProjectData = async (): Promise<ProjectData> => {
 
 
 
+
+
 // Update project data function (simulates an API POST)
 export const updateProjectData = async (data: Partial<ProjectData>): Promise<ProjectData> => {
   // Simulate network delay
