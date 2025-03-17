@@ -78,7 +78,7 @@ const Regalos: React.FC<RegalosProps> = ({
                 }
                 
                 .accordion-container {
-                  min-height: 120px; /* Ajusta este valor según necesites */
+
                   display: flex;
                   flex-direction: column;
                 }
